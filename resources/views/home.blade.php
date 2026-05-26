@@ -13,6 +13,7 @@
                     <th>score</th>
                     <th>average</th>
                     <th>status</th>
+                    <th>action</th>
                 </tr>
             </thead>
             <tbody>
@@ -33,6 +34,15 @@
                             @else
                                 {{ 'Complate' }}
                             @endif
+                        </td>
+                        <td class="d-flex flex-row gap-2 align-item-center">
+                            <a href="{{ route('students.edit', $student['id'])}}" class="btn btn-sm btn-outline-warning">Edit</a>
+                            <form action="">
+                                @csrf
+                                @method('DELETE')
+
+                                <button type="button" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete Student Data ?')">Delete</button>
+                            </form>
                         </td>
                     </tr>
                 @endforeach

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Student;
 use App\Http\Controllers\Controller;
 use App\Models\Students;
 use Illuminate\Http\Request;
+use Nette\Schema\Elements\Structure;
 
 class StudentController extends Controller
 {
@@ -47,5 +48,36 @@ class StudentController extends Controller
         if(!$process) return back()->withInput(["Failed create new student"]);
 
         return redirect()->route('home');
+    }
+
+    public function showEdit($id){
+        if(!$id) return back();
+
+        $student = Students::where('id', $id)->first();
+        return view('student.edit', compact('student'));
+    }
+
+    public function UpdateStudent($id, Request $request){
+        $newName = $request->input('student_name');
+        $newNim = $request->input('student_nim');
+
+        $student = Students::where('id', $id)->first();
+        
+        if(!$id) return back();
+
+        $updated_data = [];
+        if($newName != $student->name){
+            $updated_data['name'] = $newName;
+        }
+        if($newNim != $student->nim){
+            $updated_data['nim'] = $newNim;
+        }
+
+        if(!empty($updated_data)){
+            $student->update($updated_data);
+            return redirect()->route('home');
+        }
+        
+        return back()->withInput();
     }
 }
