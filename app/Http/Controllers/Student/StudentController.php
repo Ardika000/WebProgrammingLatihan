@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
+use App\Models\Courses;
+use App\Models\Scores;
 use App\Models\Students;
 use Illuminate\Http\Request;
 use Nette\Schema\Elements\Structure;
@@ -10,26 +12,10 @@ use Nette\Schema\Elements\Structure;
 class StudentController extends Controller
 {
     public function detail($id){
-        $students = [
-            [
-                'id' => 1,
-                'name' => 'kuda',
-                'score' => [97,95,90]
-            ],
-            [
-                'id' => 2,
-                'name' => 'ayam',
-                'score' => [90,95,100]
-            ],
-            [
-                'id' => 3,
-                'name' => 'naga',
-                'score' => [67,89,88]
-            ],
-        ];
-
-        $data = collect($students)->firstWhere('id', $id);
-        return view('student.detail', compact('data'));
+        $data = Students::where('id', $id)->first();
+        $courses = Courses::get();
+        $scores = Scores::with('course')->where('student_id', $id)->get();
+        return view('student.detail', compact('data', 'courses', 'scores'));
     }
 
     public function showCreate(){
@@ -58,9 +44,9 @@ class StudentController extends Controller
     }
 
     public function UpdateStudent($id, Request $request){
-        $newName = $request->input('student_name');
-        $newNim = $request->input('student_nim');
-
+        $newName = $request->input('student-name');
+        $newNim = $request->input('student-nim');
+        
         $student = Students::where('id', $id)->first();
         
         if(!$id) return back();
@@ -78,6 +64,32 @@ class StudentController extends Controller
             return redirect()->route('home');
         }
         
+        return back()->withInput();
+    }
+
+    public function deleteStudent($id){
+        $student = Students::where('id', $id)->first();
+        if($student){
+            $student->delete();
+            return redirect()->route('home');
+        }
+
+        return back();
+    }
+
+    public function insertScore(Request $request){
+        $student_id = $request->input('student-id');
+        $course_id = $request->input('course-id');
+        $score = $request->input('score');
+
+        $insertData = Scores::create([
+            'student_id' => $student_id,
+            'course_id' => $course_id,
+            'score' => $score
+        ]);
+
+        if($insertData) return redirect()->route('students.detail', $student_id);
+
         return back()->withInput();
     }
 }

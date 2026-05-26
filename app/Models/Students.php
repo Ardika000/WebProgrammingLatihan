@@ -14,21 +14,20 @@ class Students extends Model
     protected $fillable = ['name', 'nim'];
 
     // 3. relasi
-    public function scores(){
-        return $this->hasMany(Scores::class);
+    public function student_scores(){
+        return $this->hasMany(Scores::class, 'student_id');
     }
 
-
     // 4. custom function
-    public function getAverage(){
-        if($this->relationLoaded('scores')){
-            $count = $this->scores->count();
-            if($count == 0) return 0;
+    public function getAverage(): float{
+        // if($this->relationLoaded('student_scores')){
+        $count = $this->student_scores->count();
+        if($count == 0) return 0;
 
-            return round($this->scores->avg('score',2));
-        }
+        return round($this->student_scores->avg('score',2));
+        // }
 
-        return 0;
+        // return 0;
     }
 
 }

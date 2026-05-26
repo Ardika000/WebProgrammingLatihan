@@ -37,11 +37,11 @@
                         </td>
                         <td class="d-flex flex-row gap-2 align-item-center">
                             <a href="{{ route('students.edit', $student['id'])}}" class="btn btn-sm btn-outline-warning">Edit</a>
-                            <form action="">
+                            <form action="{{ route('students.delete', $student['id']) }}" method="POST">
                                 @csrf
                                 @method('DELETE')
 
-                                <button type="button" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete Student Data ?')">Delete</button>
+                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete Student Data ?')">Delete</button>
                             </form>
                         </td>
                     </tr>
